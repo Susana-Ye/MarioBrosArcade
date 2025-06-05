@@ -1,8 +1,8 @@
-from mario import Mario
-from floor import Floor
-from tuberia import Tuberia
-from nivel import ListaNiveles
-from pow import Pow
+from classes.mario import Mario
+from classes.floor import Floor
+from classes.tuberia import Tuberia
+from classes.nivel import ListaNiveles
+from classes.pow import Pow
 import pyxel
 
 class Board:

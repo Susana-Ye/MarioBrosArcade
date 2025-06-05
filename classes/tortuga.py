@@ -1,4 +1,4 @@
-from enemigo import Enemigo
+from classes.enemigo import Enemigo
 
 
 class Tortuga(Enemigo):

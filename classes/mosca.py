@@ -1,4 +1,4 @@
-from enemigo import Enemigo
+from classes.enemigo import Enemigo
 
 class Mosca(Enemigo):
     def __init__(self, x: int, y: int, dir: bool, spawn_time: int):

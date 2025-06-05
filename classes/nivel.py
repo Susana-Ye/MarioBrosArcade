@@ -1,7 +1,7 @@
-from tortuga import Tortuga
-from cangrejo import Cangrejo
-from mosca import Mosca
-from moneda import Moneda
+from classes.tortuga import Tortuga
+from classes.cangrejo import Cangrejo
+from classes.mosca import Mosca
+from classes.moneda import Moneda
 
 class ListaNiveles:
     def __init__(self, w: int, h: int, num_niveles: int):

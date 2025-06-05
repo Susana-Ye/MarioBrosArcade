@@ -1,4 +1,4 @@
-from board import Board
+from classes.board import Board
 import pyxel
 
 board = Board(300,220)
