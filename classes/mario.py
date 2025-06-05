@@ -1,31 +1,34 @@
+import pyxel
+from classes.floor import Floor
+from classes.pow import Pow
+
 class Mario:
     def __init__(self, x: int, y: int, dir: bool):
         """
-        @atributo x: la coordenada x inicial de Mario
-        @atributo y: la coordenada y inicial Mario
-        @atributo dir: un booleano que guarda la dirección inicial de Mario.
-            True si está mirando a la derecha, False si mira a la izquierda
-        @atributo width_mario: guarda el ancho de Mario
-        @atributo jumping: un booleano que dice si Mario está saltando o no,
-            tanto hacia arriba como abajo
-        @atributo tiempo: un contador que aumenta cuando Mario inicia un
-            salto o cae por la gravedad (permite controlar cuando Mario esté
-            moviéndose sobre el eje y)
-        @atributo velocidad: un entero que indica el número de frames
-            durante los cuales Mario debe subir de altura (en cada frame sube
-            4 píxeles)
-        @atributo gravedad: un entero que permite hacer que Mario caiga
-            cuando no haya suelo debajo
-        @atributo sprite: tupla que guarda la información correspondiente al
-            sprite de mario (banco 0, posición 0 0, tamaño 16x21)
-        @atributo vidas: guarda el número de vidas que le quedan a mario,
-            siempre empieza con 3 vidas
-        @atributo sprite_vidas: tupla que guarda la información
-            correspondiente al sprite de una vida de mario
-        @atributo puntos: entero que guarda los puntos del jugador Mario
-        @atributo string_puntos: string que rellena los puntos de Mario con
-            0s para mostrarlo en el marcador de puntos
-
+            @atributo x: la coordenada x inicial de Mario
+            @atributo y: la coordenada y inicial Mario
+            @atributo dir: un booleano que guarda la dirección inicial de Mario.
+                True si está mirando a la derecha, False si mira a la izquierda
+            @atributo width_mario: guarda el ancho de Mario
+            @atributo jumping: un booleano que dice si Mario está saltando o no,
+                tanto hacia arriba como abajo
+            @atributo tiempo: un contador que aumenta cuando Mario inicia un
+                salto o cae por la gravedad (permite controlar cuando Mario esté
+                moviéndose sobre el eje y)
+            @atributo velocidad: un entero que indica el número de frames
+                durante los cuales Mario debe subir de altura (en cada frame sube
+                4 píxeles)
+            @atributo gravedad: un entero que permite hacer que Mario caiga
+                cuando no haya suelo debajo
+            @atributo sprite: tupla que guarda la información correspondiente al
+                sprite de mario (banco 0, posición 0 0, tamaño 16x21)
+            @atributo vidas: guarda el número de vidas que le quedan a mario,
+                siempre empieza con 3 vidas
+            @atributo sprite_vidas: tupla que guarda la información
+                correspondiente al sprite de una vida de mario
+            @atributo puntos: entero que guarda los puntos del jugador Mario
+            @atributo string_puntos: string que rellena los puntos de Mario con
+                0s para mostrarlo en el marcador de puntos
         """
         self.x = x
         self.y = y
@@ -55,7 +58,73 @@ class Mario:
         # con las teclas
         self.desactivado = False
 
+    def mov_eje_y(self, es_suelo: bool, es_techo: list, es_techo_pow: bool, floor: Floor, pow: Pow):
+        """ Este método controla el movimiento de Mario en el eje y """
+        if not self.respawnear:
+            # Si mario no está saltando
+            if not self.jumping:
+                # Si no hay suelo, cae por la gravedad
+                if not es_suelo:
+                    self.velocidad = 0
+                # Si está sobre suelo e inicia un salto
+                elif pyxel.btn(pyxel.KEY_UP):
+                    self.tiempo += 1
+                    self.jumping = True
+                    self.velocidad = -45
+                # Si no está saltando y está sobre el suelo (puede que
+                # estuviera cayendo o que esté moviéndose horizontalmente)
+                else:
+                    # Mantengo la altura constante cancelando cualquier
+                    # movimiento vertical que tuviera poniendo tiempo a 0
+                    self.velocidad = 0
+                    self.tiempo = 0
+            # Si mario está saltando
+            else:
+                # Si está saltando y colisiona con el suelo
+                if es_suelo:
+                    # Paro el salto
+                    self.velocidad = 0
+                    self.tiempo = 0
+                    self.jumping = False
+                # Si está saltando y colisiona con el techo
+                elif es_techo[0]:
+                    # Cancelo la velocidad inicial y que caiga por la gravedad
+                    self.velocidad = 0
+                    # Mando el índice de la plataforma y el cacho cuyo sprite
+                    # quiero deformar
+                    floor.deformar(es_techo[1], es_techo[2])
+                # Si está saltando y colisiona con el bloque pow
+                elif es_techo_pow:
+                    # Cancelo la velocidad inicial y que caiga por la gravedad
+                    self.velocidad = 0
+                    if pow.estado.lower() != 'agotado':
+                        # Actualizo el sprite y estado de pow
+                        pow.deformar()
+                        # Hago retumbar floor
+                        floor.retumbando = True
+        if not self.muriendo and not self.respawnear:
+            self.update_y_mario(es_suelo)    
 
+    def ejecutar_muerte(self, width: int, height: int):
+        """ Este método comprueba si mario ha muerto o está respawneando y ejecuta las funciones correspondientes """
+        # Si mario muere controla la animación
+        if self.muriendo:
+            self.morir(width, height)
+
+        # Si finaliza la animación de mario muriendo y debe
+        # respawnear por encima de la panalla
+        if self.respawnear:
+            self.respawn()
+
+        # Control de activar a mario después del respawn
+        if (self.respawnear and self.y_bloque +
+            self.sprite_bloque[4] >= 38):
+            if ((pyxel.btn(pyxel.KEY_RIGHT) or
+                pyxel.btn(pyxel.KEY_LEFT) or
+            pyxel.btn(pyxel.KEY_UP))):
+                self.respawn_contador = 400
+
+                
     def mover(self, direction: str, size: int):
         """ Este método mueve a Mario en la dirección que nos indican y
         conociendo el tamaño del tablero """

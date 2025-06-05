@@ -55,7 +55,24 @@ class Floor:
                 lista_cachos.append(cacho)
             plataforma["lista_cachos"] = lista_cachos
             self.plataforma.append(plataforma)
+   
+    # Dado un bloque de suelo, devuelve cierto si el personaje está sobre
+    # ese bloque
+    def esta_sobre_bloque(self, ind_plat: int, ind_cacho: int, x: int,
+                          y: int, w: int, h: int):
+        return (((self.plataforma[ind_plat]['lista_cachos'][
+                      ind_cacho][0] <= x <= self.plataforma[ind_plat]['lista_cachos'][
+                      ind_cacho][0] + self.WIDTH_CACHO) or
+                 (self.plataforma[ind_plat]['lista_cachos'][
+                      ind_cacho][0] <= x+w <= self.plataforma[
+                     ind_plat]['lista_cachos'][
+                      ind_cacho][0] + self.WIDTH_CACHO))
+                and (self.plataforma[ind_plat]['lista_cachos'][
+                      ind_cacho][1] <= y + h
+                     <= self.plataforma[ind_plat]['lista_cachos'][
+                      ind_cacho][1] + self.HEIGHT_CACHO_NORMAL))
 
+    
     # Comprueba para los demás personajes (sin mario) si están sobre el
     # suelo o no
     def es_suelo(self, x: int, y: int, width, height, x_pow: int, y_pow: int, width_pow:
@@ -186,3 +203,4 @@ class Floor:
                     self.plataforma[i]["lista_cachos"][j][1] += 6
             self.retumbar_contador = 0
             self.retumbando = False
+

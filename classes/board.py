@@ -38,21 +38,6 @@ class Board:
         return (((x1 <= x2 <= x1+w1) or (x1 <= x2+w2 <= x1+w1)) and ((y1 <= y2
                 <= y1+h1) or (y1 <= y2+h2 <= y1+h1)))
 
-    # Dado un bloque de suelo, devuelve cierto si el personaje está sobre
-    # ese bloque
-    def esta_sobre_bloque(self, ind_plat: int, ind_cacho: int, x: int,
-                          y: int, w: int, h: int):
-        return (((self.floor.plataforma[ind_plat]['lista_cachos'][
-                      ind_cacho][0] <= x <= self.floor.plataforma[ind_plat]['lista_cachos'][
-                      ind_cacho][0] + self.floor.WIDTH_CACHO) or
-                 (self.floor.plataforma[ind_plat]['lista_cachos'][
-                      ind_cacho][0] <= x+w <= self.floor.plataforma[
-                     ind_plat]['lista_cachos'][
-                      ind_cacho][0] + self.floor.WIDTH_CACHO))
-                and (self.floor.plataforma[ind_plat]['lista_cachos'][
-                      ind_cacho][1] <= y + h
-                     <= self.floor.plataforma[ind_plat]['lista_cachos'][
-                      ind_cacho][1] + self.floor.HEIGHT_CACHO_NORMAL))
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -69,59 +54,13 @@ class Board:
                 self.partida.niveles[index].activar_personaje()
 
                 # Compruebo el estado de mario
-                es_suelo = self.floor.es_suelo_mario(self.mario.x, self.mario.y,
-                                                     self.mario.width_mario,
-                                                     self.mario.sprite_mario[4], self.pow.x, self.pow.y, self.pow.WIDTH)
-                es_techo = self.floor.es_techo(self.mario.x, self.mario.y,
-                                               self.mario.width_mario)
-                es_techo_pow = self.pow.es_techo_pow(self.mario.x, self.mario.y,
-                                               self.mario.width_mario)
+                es_suelo = self.floor.es_suelo_mario(self.mario.x, self.mario.y, self.mario.width_mario,
+                                             self.mario.sprite_mario[4], self.pow.x, self.pow.y, self.pow.WIDTH)
+                es_techo = self.floor.es_techo(self.mario.x, self.mario.y, self.mario.width_mario)
+                es_techo_pow = self.pow.es_techo_pow(self.mario.x, self.mario.y, self.mario.width_mario)
 
                 # Control del movimiento de mario en el eje y
-                if not self.mario.respawnear:
-                    # Si mario no está saltando
-                    if not self.mario.jumping:
-                        # Si no hay suelo, cae por la gravedad
-                        if not es_suelo:
-                            self.mario.velocidad = 0
-                        # Si está sobre suelo e inicia un salto
-                        elif pyxel.btn(pyxel.KEY_UP):
-                            self.mario.tiempo += 1
-                            self.mario.jumping = True
-                            self.mario.velocidad = -45
-                        # Si no está saltando y está sobre el suelo (puede que
-                        # estuviera cayendo o que esté moviéndose horizontalmente)
-                        else:
-                            # Mantengo la altura constante cancelando cualquier
-                            # movimiento vertical que tuviera poniendo tiempo a 0
-                            self.mario.velocidad = 0
-                            self.mario.tiempo = 0
-                    # Si mario está saltando
-                    else:
-                        # Si está saltando y colisiona con el suelo
-                        if es_suelo:
-                            # Paro el salto
-                            self.mario.velocidad = 0
-                            self.mario.tiempo = 0
-                            self.mario.jumping = False
-                        # Si está saltando y colisiona con el techo
-                        elif es_techo[0]:
-                            # Cancelo la velocidad inicial y que caiga por la gravedad
-                            self.mario.velocidad = 0
-                            # Mando el índice de la plataforma y el cacho cuyo sprite
-                            # quiero deformar
-                            self.floor.deformar(es_techo[1], es_techo[2])
-                        # Si está saltando y colisiona con el bloque pow
-                        elif es_techo_pow:
-                            # Cancelo la velocidad inicial y que caiga por la gravedad
-                            self.mario.velocidad = 0
-                            if self.pow.estado.lower() != 'agotado':
-                                # Actualizo el sprite y estado de pow
-                                self.pow.deformar()
-                                # Hago retumbar floor
-                                self.floor.retumbando = True
-                if not self.mario.muriendo and not self.mario.respawnear:
-                    self.mario.update_y_mario(es_suelo)
+                self.mario.mov_eje_y(es_suelo, es_techo, es_techo_pow, self.floor, self.pow)
 
                 # Control del movimiento de mario en el eje x
                 if not self.mario.desactivado:
@@ -131,23 +70,9 @@ class Board:
                         self.mario.mover('left', self.width)
                     else:
                         self.mario.mover('stop', self.width)
-
-                # Si mario muere controla la animación
-                if self.mario.muriendo:
-                    self.mario.morir(self.width, self.height)
-
-                # Si finaliza la animación de mario muriendo y debe
-                # respawnear por encima de la panalla
-                if self.mario.respawnear:
-                    self.mario.respawn()
-
-                # Control de activar a mario después del respawn
-                if (self.mario.respawnear and self.mario.y_bloque +
-                    self.mario.sprite_bloque[4] >= 38):
-                    if ((pyxel.btn(pyxel.KEY_RIGHT) or
-                        pyxel.btn(pyxel.KEY_LEFT) or
-                    pyxel.btn(pyxel.KEY_UP))):
-                        self.mario.respawn_contador = 400
+                
+                # Control de la muerte y respawn de mario
+                self.mario.ejecutar_muerte(self.width, self.height)
 
                 # Control de todos los personajes activos de ese nivel
                 for i in range(self.partida.niveles[index].num_personajes):
@@ -160,51 +85,36 @@ class Board:
                             self.partida.niveles[index].personajes[i].width,
                             self.partida.niveles[index].personajes[i].sprite[
                                 4], self.pow.x, self.pow.y, self.pow.WIDTH)
-                        # Comprueba si el personaje ha colisionado con un
-                        # tubo de entrada
+                        # Comprueba si el personaje ha colisionado con un tubo de entrada
                         es_tubo_entrada = self.tuberia.es_tubo_entrada(
                             self.partida.niveles[index].personajes[i].x,
                             self.partida.niveles[index].personajes[i].y,
                             self.partida.niveles[index].personajes[i].width,
                             self.partida.niveles[index].personajes[i].dir)
 
-                        # Comprueba si el personaje ha colisionado con otro
-                        # personaje
-                        for j in range(self.partida.niveles[
-                                           index].num_personajes):
+                        # Comprueba si el personaje ha colisionado con otro personaje
+                        for j in range(self.partida.niveles[index].num_personajes):
                             # Me aseguro de que no estoy chocando conmigo
                             # mismo y que el otro personaje en j está vivo,
                             # y que ninguno de los dos estuvieramos rotando
-                            # porque entonces
-                            # entro en bucle infinito rotando con el mismo
-                            # personaje
-                            if (i != j and not self.partida.niveles[
-                                index].personajes[
-                                i].rotando and not self.partida.niveles[
-                                index].personajes[
-                                i].volteado and not self.partida.niveles[
-                                index].personajes[
-                                j].rotando and self.partida.niveles[
-                                    index].personajes[
-                                j].vivo and self.colision(
-                                    self.partida.niveles[index].personajes[i].x,
-                            self.partida.niveles[index].personajes[i].y,
-                            self.partida.niveles[index].personajes[i].width,
-                            self.partida.niveles[index].personajes[i].sprite[4],
-                            self.partida.niveles[index].personajes[j].x,
-                            self.partida.niveles[index].personajes[j].y,
-                            self.partida.niveles[index].personajes[i].width,
-                            self.partida.niveles[index].personajes[i].sprite[
-                                4])):
-                                self.partida.niveles[index].personajes[
-                                    i].rotando = True
-                                if not self.partida.niveles[
-                                index].personajes[j].volteado:
-                                     self.partida.niveles[index].personajes[
-                                        j].rotando = True
+                            # porque entonces entro en bucle infinito rotando con el mismo personaje
+                            if (i != j and not self.partida.niveles[index].personajes[i].rotando 
+                                and not self.partida.niveles[index].personajes[i].volteado 
+                                and not self.partida.niveles[index].personajes[j].rotando
+                                and self.partida.niveles[index].personajes[j].vivo 
+                                and self.colision(self.partida.niveles[index].personajes[i].x,
+                                self.partida.niveles[index].personajes[i].y,
+                                self.partida.niveles[index].personajes[i].width,
+                                self.partida.niveles[index].personajes[i].sprite[4],
+                                self.partida.niveles[index].personajes[j].x,
+                                self.partida.niveles[index].personajes[j].y,
+                                self.partida.niveles[index].personajes[i].width,
+                                self.partida.niveles[index].personajes[i].sprite[4])):
+                                self.partida.niveles[index].personajes[i].rotando = True
+                                if not self.partida.niveles[index].personajes[j].volteado:
+                                    self.partida.niveles[index].personajes[j].rotando = True
 
-                        # Controla si mario ha chocado con alguno de los
-                        # enemigos
+                        # Controla si mario ha chocado con alguno de los enemigos
                         if (not self.mario.respawnear and self.colision(
                         self.partida.niveles[
                              index].personajes[i].x, self.partida.niveles[
@@ -236,7 +146,7 @@ class Board:
                             if ((self.colision(self.mario.x, self.mario.y, self.mario.width_mario, self.mario.sprite_mario[4],
                                               self.partida.niveles[index].personajes[i].x, self.partida.niveles[index].personajes[i].y,
                                               self.partida.niveles[index].personajes[i].width, self.partida.niveles[index].personajes[i].sprite[4])
-                                 or (es_techo[0] and self.esta_sobre_bloque(es_techo[1], es_techo[2], self.partida.niveles[index].personajes[i].x, self.partida.niveles[index].personajes[i].y,
+                                 or (es_techo[0] and self.floor.esta_sobre_bloque(es_techo[1], es_techo[2], self.partida.niveles[index].personajes[i].x, self.partida.niveles[index].personajes[i].y,
                                               self.partida.niveles[index].personajes[i].width, self.partida.niveles[index].personajes[i].sprite[4])))
                                  or (es_techo_pow and self.floor.retumbando and es_suelo_personaje[0])
                                  and not self.partida.niveles[index].personajes[i].colision_mario):
@@ -278,7 +188,7 @@ class Board:
                                     'mosca'):
                                 # Si recibe un toque por el suelo deformado,
                                 # o si el pow se activa y está tocando el suelo
-                                if ((es_techo[0] and self.esta_sobre_bloque(es_techo[1], es_techo[2],
+                                if ((es_techo[0] and self.floor.esta_sobre_bloque(es_techo[1], es_techo[2],
                                         self.partida.niveles[index].personajes[i].x, self.partida.niveles[index].personajes[i].y,
                                         self.partida.niveles[index].personajes[i].width, self.partida.niveles[index].personajes[i].sprite[4]))
                                     or (es_techo_pow and self.floor.retumbando
@@ -314,7 +224,7 @@ class Board:
                                 # Si mario le da al cangrejo deformando el
                                 # suelo, o se activa el pow y el cangrejo
                                 # está en contacto con el suelo
-                                if ((es_techo[0] and self.esta_sobre_bloque(es_techo[1], es_techo[2], self.partida.niveles[index].personajes[i].x,
+                                if ((es_techo[0] and self.floor.esta_sobre_bloque(es_techo[1], es_techo[2], self.partida.niveles[index].personajes[i].x,
                                         self.partida.niveles[index].personajes[i].y,self.partida.niveles[index].personajes[i].width,
                                         self.partida.niveles[ index].personajes[i].sprite[4]))
                                     or (es_techo_pow and self.floor.retumbando
@@ -529,29 +439,20 @@ class Board:
 
         # Dibuja la parte del fondo de las tuberías
         for i in range(2):
-            pyxel.bltm(self.tuberia.sprite_fondo[i][0],
-                       self.tuberia.sprite_fondo[i][1],
-                       self.tuberia.sprite_fondo[i][2],
-                       self.tuberia.sprite_fondo[i][3],
-                       self.tuberia.sprite_fondo[i][4],
-                       self.tuberia.sprite_fondo[i][5],
+            pyxel.bltm(self.tuberia.sprite_fondo[i][0], self.tuberia.sprite_fondo[i][1],
+                       self.tuberia.sprite_fondo[i][2], self.tuberia.sprite_fondo[i][3],
+                       self.tuberia.sprite_fondo[i][4], self.tuberia.sprite_fondo[i][5],
                        self.tuberia.sprite_fondo[i][6], colkey=2)
 
         # Dibuja las tuberías encima, con los respectivos cachos, etc.
         for i in range(4):
-            pyxel.bltm(self.tuberia.sprite[i][0],
-                       self.tuberia.sprite[i][1],
-                       self.tuberia.sprite[i][2],
-                       self.tuberia.sprite[i][3],
-                       self.tuberia.sprite[i][4],
-                       self.tuberia.sprite[i][5],
+            pyxel.bltm(self.tuberia.sprite[i][0], self.tuberia.sprite[i][1], self.tuberia.sprite[i][2], 
+                       self.tuberia.sprite[i][3], self.tuberia.sprite[i][4], self.tuberia.sprite[i][5],
                        self.tuberia.sprite[i][6], colkey=2)
 
         # Dibuja el bloque Pow
-        pyxel.blt(self.pow.x, self.pow.y, self.pow.sprite[0],
-                  self.pow.sprite[1], self.pow.sprite[2],
-                  self.pow.sprite[3], self.pow.sprite[4],
-                  colkey=8)
+        pyxel.blt(self.pow.x, self.pow.y, self.pow.sprite[0], self.pow.sprite[1], self.pow.sprite[2],
+                  self.pow.sprite[3], self.pow.sprite[4], colkey=8)
 
         # Dibuja el marcador de puntos
         pyxel.text(4, 4, "I:", 11)
@@ -559,10 +460,8 @@ class Board:
 
         # Dibuja el marcador de vidas
         for i in range(self.mario.vidas):
-            pyxel.blt(46 + i * 10,4,
-                            self.mario.sprite_vidas[0],
-                      self.mario.sprite_vidas[1], self.mario.sprite_vidas[2],
-                      self.mario.sprite_vidas[3], self.mario.sprite_vidas[4],
+            pyxel.blt(46 + i * 10,4, self.mario.sprite_vidas[0], self.mario.sprite_vidas[1], 
+                      self.mario.sprite_vidas[2], self.mario.sprite_vidas[3], self.mario.sprite_vidas[4],
                       colkey=8)
 
         # Si pierdo el juego, no dibujo a ningún personaje
@@ -670,4 +569,3 @@ class Board:
 
             self.partida.niveles[self.partida.ind_nivel].tiempo += 1
 
-            
