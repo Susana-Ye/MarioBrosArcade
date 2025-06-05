@@ -47,7 +47,7 @@ To try the game yourself:
 3. Run the main Python file with:
 
 ```bash
-python main.py
+py main.py
 ```
 
 <h2>🧑‍💻 Authors</h2>
