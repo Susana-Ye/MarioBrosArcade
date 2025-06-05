@@ -670,7 +670,4 @@ class Board:
 
             self.partida.niveles[self.partida.ind_nivel].tiempo += 1
 
-
-
-
-
+            
