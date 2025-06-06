@@ -1,4 +1,5 @@
 from classes.enemigo import Enemigo
+from classes.floor import Floor
 
 class Cangrejo(Enemigo):
     def __init__(self, x: int, y: int, dir: bool, spawn_time: int):
@@ -8,6 +9,40 @@ class Cangrejo(Enemigo):
         self.enfadado_contador = 0
         self.sprite = (0, 0, 136, 16, 16)
 
+    def choque_cangrejo(self, es_techo: list, es_techo_pow: bool, es_suelo_personaje: list, floor: Floor):
+        # Si mario le da al cangrejo deformando el suelo, o se activa el pow y el cangrejo
+        # está en contacto con el suelo
+        if ((es_techo[0] and floor.esta_sobre_bloque(es_techo[1], es_techo[2], self.x, self.y, self.width, self.sprite[4]))
+            or (es_techo_pow and floor.retumbando and es_suelo_personaje[0])):
+
+            # Si ha sido el golpe debido al pow, lo hago saber
+            if (es_techo_pow and floor.retumbando and es_suelo_personaje[0]):
+                self.toque_pow += 1
+
+            # Si es la primera vez que le da al cangrejo
+            if self.contador_toques < 1:
+                self.contador_toques += 1
+                self.enfadandose = True
+                self.velocidad_x = 2
+
+            # Debe ser cuando los toques sean superiores a 4 frames para que deje transcurrir
+            # un tiempo y que el primer golpe debido a la deformación del suelo termine
+            # antes de comprobar un segundo choque. Si ha sido por pow no hace falta
+            elif (self.contador_toques < 5 and self.toque_pow < 1):
+                self.contador_toques += 1
+
+            # Si mario le da una segunda vez desde el suelo o con el pow
+            else:
+                # Si le dan cuando ya estaba volteado
+                if (self.volteado):
+                    self.volteado_contador = 158
+                else:
+                    self.volteado = True
+
+        # Si el cangrejo está en proceso de enfadarse
+        if self.enfadandose:
+            self.enfadar()
+    
     def mover(self, size: int):
         """ Este método mueve el cangrejo en la dirección que indica self.dir y
             conociendo el tamaño del tablero """

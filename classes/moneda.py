@@ -1,3 +1,6 @@
+from classes.mario import Mario
+from classes.floor import Floor
+
 class Moneda:
 
     def __init__(self, x: int, y: int, dir: bool, spawn_time: int):
@@ -26,6 +29,42 @@ class Moneda:
         self.rotar_contador = 0
         self.rotando = False
 
+    # Dadas las coordenadas (x, y) y medidas de ancho y alto (w, h) de
+    # dos objetos 1 y 2, devuelve cierto si entran en colisión
+    def colision(self, x1: int, y1: int, w1: int, h1: int, x2: int,
+                 y2: int, w2: int, h2: int):
+        return (((x1 <= x2 <= x1+w1) or (x1 <= x2+w2 <= x1+w1)) and ((y1 <= y2
+                <= y1+h1) or (y1 <= y2+h2 <= y1+h1)))
+
+    
+    def ejecucion_moneda(self, num_derrotados: int, mario: Mario, floor: Floor, es_techo: list, es_techo_pow: bool, es_suelo_personaje: list, es_tubo_entrada: list, width: int):
+        
+        # Si mario colisiona con la moneda o deforma el suelo justo de debajo o se activa el pow mientras 
+        # la moneda está tocando el suelo, activo la animación de explotar la moneda y se actualizan los puntos
+        if ((self.colision(mario.x, mario.y, mario.width_mario, mario.sprite_mario[4],
+                            self.x, self.y, self.width, self.sprite[4])
+                or (es_techo[0] and floor.esta_sobre_bloque(es_techo[1], es_techo[2], self.x, self.y,
+                            self.width, self.sprite[4])))
+                or (es_techo_pow and floor.retumbando and es_suelo_personaje[0])
+                and not self.colision_mario):
+            self.colision_mario = True
+            num_derrotados += 1
+
+        # Mientras está activa la animación de explotar la moneda
+        if self.colision_mario and not self.derrotado:
+            self.explota()
+            if self.explota_contador == 1:
+                mario.update_puntos()
+
+        # Si no ha ocurrido nada de lo anterior, la moneda sigue moviéndose
+        elif not self.colision_mario:
+            self.mover(width)
+            self.update_y_moneda(es_suelo_personaje)
+
+        # Si la moneda entra en contacto con el tubo, llamo a entrar_tubo y le hago desaparecer
+        if es_tubo_entrada[0]:
+            self.entrar_tubo(es_tubo_entrada[1], es_tubo_entrada[2], es_tubo_entrada[3])
+    
 
     def mover(self, size: int):
         """ Este método mueve la moneda en la dirección que indica self.dir y

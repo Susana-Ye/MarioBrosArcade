@@ -58,6 +58,23 @@ class Mario:
         # con las teclas
         self.desactivado = False
 
+    def ejecucion_mario(self, es_suelo: bool, es_techo: list, es_techo_pow: bool, floor: Floor, pow: Pow, width: int, height: int):
+
+        # Control del movimiento de mario en el eje y
+        self.mov_eje_y(es_suelo, es_techo, es_techo_pow, floor, pow)
+
+        # Control del movimiento de mario en el eje x
+        if not self.desactivado:
+            if pyxel.btn(pyxel.KEY_RIGHT):
+                self.mover('right', width)
+            elif pyxel.btn(pyxel.KEY_LEFT):
+                self.mover('left', width)
+            else:
+                self.mover('stop', width)
+        
+        # Control de la muerte y respawn de mario
+        self.ejecutar_muerte(width, height)
+         
     def mov_eje_y(self, es_suelo: bool, es_techo: list, es_techo_pow: bool, floor: Floor, pow: Pow):
         """ Este método controla el movimiento de Mario en el eje y """
         if not self.respawnear:
@@ -104,27 +121,7 @@ class Mario:
                         floor.retumbando = True
         if not self.muriendo and not self.respawnear:
             self.update_y_mario(es_suelo)    
-
-    def ejecutar_muerte(self, width: int, height: int):
-        """ Este método comprueba si mario ha muerto o está respawneando y ejecuta las funciones correspondientes """
-        # Si mario muere controla la animación
-        if self.muriendo:
-            self.morir(width, height)
-
-        # Si finaliza la animación de mario muriendo y debe
-        # respawnear por encima de la panalla
-        if self.respawnear:
-            self.respawn()
-
-        # Control de activar a mario después del respawn
-        if (self.respawnear and self.y_bloque +
-            self.sprite_bloque[4] >= 38):
-            if ((pyxel.btn(pyxel.KEY_RIGHT) or
-                pyxel.btn(pyxel.KEY_LEFT) or
-            pyxel.btn(pyxel.KEY_UP))):
-                self.respawn_contador = 400
-
-                
+    
     def mover(self, direction: str, size: int):
         """ Este método mueve a Mario en la dirección que nos indican y
         conociendo el tamaño del tablero """
@@ -172,6 +169,25 @@ class Mario:
                 else:
                     self.sprite_mario = (2, 200, 0, 16, 21)
 
+    def ejecutar_muerte(self, width: int, height: int):
+        """ Este método comprueba si mario ha muerto o está respawneando y ejecuta las funciones correspondientes """
+        # Si mario muere controla la animación
+        if self.muriendo:
+            self.morir(width, height)
+
+        # Si finaliza la animación de mario muriendo y debe
+        # respawnear por encima de la panalla
+        if self.respawnear:
+            self.respawn()
+
+        # Control de activar a mario después del respawn
+        if (self.respawnear and self.y_bloque +
+            self.sprite_bloque[4] >= 38):
+            if ((pyxel.btn(pyxel.KEY_RIGHT) or
+                pyxel.btn(pyxel.KEY_LEFT) or
+            pyxel.btn(pyxel.KEY_UP))):
+                self.respawn_contador = 400
+ 
     def update_y_mario(self, es_suelo: bool):
         """Este método actualiza la posición en el eje y de mario en función
         de si está en el suelo, o saltando..."""
@@ -201,7 +217,6 @@ class Mario:
         self.jumping = False
         self.tiempo = 0
         self.velocidad = 0
-
 
     # Gestiona la animación de mario tras morir y le hace caer por la pantalla
     def morir(self, w_size: int, h_size: int):
