@@ -50,7 +50,6 @@ class Enemigo:
         # enfadado
         self.cambio_color = False
 
-
     def mover_ene(self, size: int, size_ene: int):
 
         if self.dir and self.x < size - size_ene:
@@ -97,8 +96,7 @@ class Enemigo:
                 return (((x1 <= x2 <= x1+w1) or (x1 <= x2+w2 <= x1+w1)) and ((y1 <= y2
                         <= y1+h1) or (y1 <= y2+h2 <= y1+h1)))
 
-    def muere_enemigo(self, w_size: int, h_size: int, dir: bool, sprite:
-    tuple):
+    def muere_enemigo(self, w_size: int, h_size: int, dir: bool, sprite: tuple):
 
         if (self.x >= w_size or self.x + self.width < 0 or self.y >=
                 h_size or self.y + sprite[4] < 0):

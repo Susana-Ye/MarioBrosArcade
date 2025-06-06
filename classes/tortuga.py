@@ -1,6 +1,4 @@
 from classes.enemigo import Enemigo
-
-
 class Tortuga(Enemigo):
     def __init__(self, x: int, y: int, dir: bool, spawn_time: int):
         super().__init__(x, y, dir, spawn_time)
@@ -115,4 +113,3 @@ class Tortuga(Enemigo):
 
     def muere(self, w_size: int, h_size: int, dir: bool):
         return super().muere_enemigo(w_size, h_size, dir, self.sprite)
-

@@ -1,5 +1,6 @@
 from classes.mario import Mario
 from classes.floor import Floor
+import pyxel
 
 class Moneda:
 
@@ -133,4 +134,14 @@ class Moneda:
         else:
             self.rotar_contador += 1
 
-
+    def draw_coin(self):
+        if self.derrotado and self.vivo:
+            if self.puntos_contador*2 <= 8:
+                pyxel.text(self.x-2, self.y - self.puntos_contador*2, "800", 11)
+            else:
+                pyxel.text(self.x-2, self.y - 8, "800", 11)
+            if self.puntos_contador >= 12:
+                self.vivo = False
+            self.puntos_contador += 1
+        if self.vivo and self.puntos_contador < 5:
+            pyxel.blt(self.x, self.y, self.sprite[0], self.sprite[1], self.sprite[2], self.sprite[3], self.sprite[4], colkey=8)

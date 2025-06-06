@@ -6,6 +6,7 @@ from classes.pow import Pow
 from classes.floor import Floor
 from classes.tuberia import Tuberia
 from classes.mario import Mario
+import pyxel
 
 class ListaNiveles:
     def __init__(self, w: int, h: int, num_niveles: int):
@@ -50,7 +51,7 @@ class Nivel:
         """
         @atributo personajes: lista de los personajes que van a salir en el nivel
         """
-        LISTA_NUM_PERSONAJES = [1, 10, 10, 10]
+        LISTA_NUM_PERSONAJES = [10, 10, 10, 10]
         TUBO_IZQ = (38, True)
         TUBO_DER = (248, False)
 
@@ -252,3 +253,28 @@ class Nivel:
                     if (es_tubo_entrada[0] and not self.personajes[i].derrotado 
                         and not self.personajes[i].mata_enemigo):
                         self.personajes[i].entrar_tubo(es_tubo_entrada[1], es_tubo_entrada[2], es_tubo_entrada[3])
+    
+    # Dibujo los personajes activos del nivel
+    def draw_lvlchars(self):
+        for i in range(self.num_personajes):
+            if self.personajes[i].vivo:
+
+                # Gestiona toda la animación de la moneda
+                if self.tipo[i] == 'moneda':
+                    # Dibuja la moneda
+                    self.personajes[i].draw_coin()
+
+                # Dibuja al enemigo que no sea una moneda
+                else:
+                    pyxel.blt(self.personajes[i].x, self.personajes[i].y, self.personajes[i].sprite[0], self.personajes[i].sprite[1], 
+                                self.personajes[i].sprite[2], self.personajes[i].sprite[3], self.personajes[i].sprite[4], colkey=8)
+                    # Gestiona la animación de la puntuación cuando un enemigo es derrotado
+                    if self.personajes[i].mata_enemigo:
+                        # Si mario mata al enemigo, dibujo los efectos especiales de la puntuación
+                        if self.personajes[i].puntos_contador * 2 <= 8:
+                            pyxel.text(self.personajes[i].posicion_muerte[0], self.personajes[i].posicion_muerte[1]
+                                        - self.personajes[i].puntos_contador * 2, "800", 11)
+                        else:
+                            pyxel.text(self.personajes[i].posicion_muerte[0], self.personajes[i].posicion_muerte[1] - 8, "800", 11)
+                            self.personajes[i].derrotado = True
+                        self.personajes[i].puntos_contador += 1

@@ -1,3 +1,4 @@
+import pyxel
 class Pow:
 
     def __init__(self, w: int, h: int):
@@ -14,8 +15,7 @@ class Pow:
 
     # Permite saber si mario ha chocado con el pow por debajo
     def es_techo_pow(self, x: int, y: int, width_mario: int):
-        return ((self.x <= x <= self.x + self.WIDTH or self.x <= x +
-             width_mario <= self.x + self.WIDTH) and
+        return ((self.x <= x <= self.x + self.WIDTH or self.x <= x + width_mario <= self.x + self.WIDTH) and
                 (self.y <= y <= self.y + self.sprite[4]))
 
     def deformar(self):
@@ -29,3 +29,6 @@ class Pow:
             self.estado = 'agotado'
             self.x = - self.WIDTH
             self.y = - self.WIDTH
+    
+    def draw_pow(self):
+        pyxel.blt(self.x, self.y, self.sprite[0], self.sprite[1], self.sprite[2], self.sprite[3], self.sprite[4], colkey=8)
