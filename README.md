@@ -17,17 +17,17 @@ The game includes platforming mechanics, enemy behavior, collision detection, an
 <h2>🎮 Gameplay Walkthrough</h2>
 
 <p align="center">
-Start screen: <br/>
-<img src="https://i.imgur.com/YOUR_START_IMAGE.png" width="80%" alt="Start Screen"/>
+Starting the level: <br/>
+<img src="https://i.imgur.com/dHQY4Ce.png" width="60%" alt="Start Screen"/>
 <br /><br />
-Gameplay example – defeating enemies: <br/>
-<img src="https://i.imgur.com/YOUR_GAMEPLAY_IMAGE.png" width="80%" alt="In-Game Action"/>
+Defeating enemies: <br/>
+<img src="https://i.imgur.com/Dw8oZHD.png" width="60%" alt="Defeating Enemy"/>
 <br /><br />
 Mario collects coins: <br/>
-<img src="https://i.imgur.com/YOUR_COIN_IMAGE.png" width="80%" alt="Mario Collecting Coins"/>
+<img src="https://i.imgur.com/YOUR_COIN_IMAGE.png" width="60%" alt="Mario Collecting Coins"/>
 <br /><br />
 Level complete: <br/>
-<img src="https://i.imgur.com/YOUR_WIN_IMAGE.png" width="80%" alt="Level Complete Screen"/>
+<img src="https://i.imgur.com/YOUR_WIN_IMAGE.png" width="60%" alt="Level Complete Screen"/>
 </p>
 
 <h2>📌 Features</h2>
