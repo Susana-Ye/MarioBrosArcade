@@ -1,6 +1,6 @@
 <h1>🎮 Mario Bros Arcade [Python Project]</h1>
 
- ### [YouTube Playthrough Demonstration]() <!-- Añadir enlace a grabacion de pantalla de playthrough del mario entre paréntesis -->
+ ### [YouTube Playthrough Demonstration](https://youtu.be/jkXYtZbMatM)
 
 <h2>📝 Description</h2>
 This project is a simplified recreation of the classic 1983 Mario Bros. arcade game, developed in Python using object-oriented programming. The game features 4 levels, each with a mix of 10 enemies and coins emerging from pipes. The player controls Mario, who must defeat all enemies in each stage to advance.
@@ -14,7 +14,7 @@ The game includes platforming mechanics, enemy behavior, collision detection, an
 - <b>Python</b> 
 - <b>Pyxel game engine</b>
 
-<h2>🎮 Gameplay Walkthrough</h2>
+<h2>📷 Gameplay Walkthrough</h2>
 
 <p align="center">
 Starting the level: <br/>
@@ -24,10 +24,10 @@ Defeating enemies: <br/>
 <img src="https://i.imgur.com/Dw8oZHD.png" width="60%" alt="Defeating Enemy"/>
 <br /><br />
 Mario collects coins: <br/>
-<img src="https://i.imgur.com/YOUR_COIN_IMAGE.png" width="60%" alt="Mario Collecting Coins"/>
+<img src="https://imgur.com/zq1kxWA.png" width="60%" alt="Mario Collecting Coins"/>
 <br /><br />
-Level complete: <br/>
-<img src="https://i.imgur.com/YOUR_WIN_IMAGE.png" width="60%" alt="Level Complete Screen"/>
+Winning the game: <br/>
+<img src="https://imgur.com/jzaRxQK.png" width="60%" alt="Winning Screen"/>
 </p>
 
 <h2>📌 Features</h2>
@@ -40,6 +40,8 @@ Level complete: <br/>
 - Basic scoring and victory/defeat screens.
 
 <h2>📽️ Demo & Play</h2>
+
+The current game settings include 4 levels, each with 10 enemies/coins. 
 
 To try the game yourself:
 1. Install [Pyxel](https://github.com/kitao/pyxel).
@@ -55,38 +57,6 @@ py main.py
 - Susana Ye Zhan
 
 <!--
-<h2>🎮 Gameplay Walkthrough:</h2>
-
-<p align="center">
-Launch the utility: <br/>
-<img src="https://i.imgur.com/62TgaWL.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Select the disk:  <br/>
-<img src="https://i.imgur.com/tcTyMUE.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Enter the number of passes: <br/>
-<img src="https://i.imgur.com/nCIbXbg.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Confirm your selection:  <br/>
-<img src="https://i.imgur.com/cdFHBiU.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Wait for process to complete (may take some time):  <br/>
-<img src="https://i.imgur.com/JL945Ga.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Sanitization complete:  <br/>
-<img src="https://i.imgur.com/K71yaM2.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Observe the wiped disk:  <br/>
-<img src="https://i.imgur.com/AeZkvFQ.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-
-
  ```diff
 - text in red
 + text in green
