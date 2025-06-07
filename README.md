@@ -21,10 +21,10 @@ Starting the level: <br/>
 <img src="https://i.imgur.com/dHQY4Ce.png" width="60%" alt="Start Screen"/>
 <br /><br />
 Defeating enemies: <br/>
-<img src="https://i.imgur.com/Dw8oZHD.png" width="60%" alt="Defeating Enemy"/>
+<img src="https://i.imgur.com/Dw8oZHD.png" width="50%" alt="Defeating Enemy"/>
 <br /><br />
 Mario collects coins: <br/>
-<img src="https://imgur.com/zq1kxWA.png" width="60%" alt="Mario Collecting Coins"/>
+<img src="https://imgur.com/zq1kxWA.png" width="40%" alt="Mario Collecting Coins"/>
 <br /><br />
 Winning the game: <br/>
 <img src="https://imgur.com/jzaRxQK.png" width="60%" alt="Winning Screen"/>
