@@ -4,7 +4,7 @@
 
 <h2>📝 Description</h2>
 This project is a simplified recreation of the classic 1983 Mario Bros. arcade game, developed in Python using object-oriented programming. The game features 4 levels, each with a mix of 10 enemies and coins emerging from pipes. The player controls Mario, who must defeat all enemies in each stage to advance.
-
+<br><br>
 The game includes platforming mechanics, enemy behavior, collision detection, and animations. Mario starts with 3 lives, and winning the game requires completing all levels without losing them. The code is structured into multiple classes (Mario, Enemy, Level, Floor, etc.), emphasizing modular design and real-time interaction handling.
 <br />
 
